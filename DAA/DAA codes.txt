@@ -1,0 +1,223 @@
+DAA1
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int knapSack(int W, vector<int>& wt, vector<int>& val, int n) {
+    vector<vector<int>> dp(n + 1, vector<int>(W + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int w = 1; w <= W; w++) {
+            if (wt[i - 1] > w) {
+                dp[i][w] = dp[i - 1][w];
+            } else {
+                dp[i][w] = max(val[i - 1] + dp[i - 1][w - wt[i - 1]], dp[i - 1][w]);
+            }
+        }
+    }
+
+    return dp[n][W];
+}
+
+int main() {
+    int n, W;
+    cout << "Enter the number of items: ";
+    cin >> n;
+
+    vector<int> val(n);
+    vector<int> weight(n);
+
+    cout << "Enter the values of items: ";
+    for (int i = 0; i < n; i++) {
+        cin >> val[i];
+    }
+
+    cout << "Enter the weights of items: ";
+    for (int i = 0; i < n; i++) {
+        cin >> weight[i];
+    }
+
+    cout << "Enter the knapsack capacity: ";
+    cin >> W;
+
+    int result = knapSack(W, weight, val, n);
+
+    cout << "Maximum profit: " << result << endl;
+
+    return 0;
+}
+
+
+
+
+------------------------------------------------------------------------------------------------------------------
+
+DAA2
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void printSolution(const vector<vector<int>>& board) {
+    int N = board.size();
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (board[i][j] == 1)
+                cout << "Q ";
+            else
+                cout << ". ";
+        }
+        cout << endl;
+    }
+}
+
+bool isSafe(const vector<vector<int>>& board, int row, int col) {
+    int N = board.size();
+
+    // Check the left side of the current row
+    for (int i = 0; i < col; i++) {
+        if (board[row][i] == 1)
+            return false;
+    }
+
+    // Check upper diagonal on the left side
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] == 1)
+            return false;
+    }
+
+    // Check lower diagonal on the left side
+    for (int i = row, j = col; i < N && j >= 0; i++, j--) {
+        if (board[i][j] == 1)
+            return false;
+    }
+
+    return true;
+}
+
+bool solveNQUtil(vector<vector<int>>& board, int col) {
+    int N = board.size();
+
+    if (col >= N)
+        return true;
+
+    for (int i = 0; i < N; i++) {
+        if (isSafe(board, i, col)) {
+            board[i][col] = 1;
+            if (solveNQUtil(board, col + 1))
+                return true;
+            board[i][col] = 0;
+        }
+    }
+
+    return false;
+}
+
+bool solveNQ(int N) {
+    vector<vector<int>> board(N, vector<int>(N, 0));
+
+    if (!solveNQUtil(board, 0)) {
+        cout << "Solution does not exist" << endl;
+        return false;
+    }
+
+    printSolution(board);
+    return true;
+}
+
+int main() {
+    int N;
+    cout << "Enter the value of N for the N-Queens problem: ";
+    cin >> N;
+
+    if (N <= 0) {
+        cout << "Invalid input. N should be a positive integer." << endl;
+        return 1;
+    }
+
+    solveNQ(N);
+    return 0;
+}
+
+------------------------------------------------------------------------------------------------------------------
+
+DAA 3
+
+#include <iostream>
+using namespace std;
+
+void multiply(int** arr1, int** arr2, int** arr3, int m, int n, int p) {
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            arr3[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+                arr3[i][j] += arr1[i][k] * arr2[k][j];
+            }
+        }
+    }
+}
+
+int main() {
+    int m, n, p;
+
+    cout << "Enter the dimensions of matrix A (m x n): ";
+    cin >> m >> n;
+
+    cout << "Enter the dimensions of matrix B (n x p): ";
+    cin >> n >> p;
+
+    int** arr1 = new int*[m];
+    int** arr2 = new int*[n];
+    int** arr3 = new int*[m];
+
+    for (int i = 0; i < m; i++) {
+        arr1[i] = new int[n];
+        arr3[i] = new int[p];
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr2[i] = new int[p];
+    }
+
+    cout << "Enter matrix A:" << endl;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> arr1[i][j];
+        }
+    }
+
+    cout << "Enter matrix B:" << endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < p; j++) {
+            cin >> arr2[i][j];
+        }
+    }
+
+    multiply(arr1, arr2, arr3, m, n, p);
+
+    cout << "Multiplication of the two matrices:" << endl;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < p; j++) {
+            cout << arr3[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    for (int i = 0; i < m; i++) {
+        delete[] arr1[i];
+        delete[] arr3[i];
+    }
+
+    for (int i = 0; i < n; i++) {
+        delete[] arr2[i];
+    }
+
+    delete[] arr1;
+    delete[] arr2;
+    delete[] arr3;
+
+    return 0;
+}
+
+------------------------------------------------------------------------------------------------------------------
+
+
